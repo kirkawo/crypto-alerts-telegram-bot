@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CryptoAlerts.Application/CryptoAlerts.Application.csproj" />
+    <Project Path="src/CryptoAlerts.Bot/CryptoAlerts.Bot.csproj" />
+    <Project Path="src/CryptoAlerts.Domain/CryptoAlerts.Domain.csproj" />
+    <Project Path="src/CryptoAlerts.Infrastructure/CryptoAlerts.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CryptoAlerts.UnitTests/CryptoAlerts.UnitTests.csproj" />
+  </Folder>
+</Solution>
