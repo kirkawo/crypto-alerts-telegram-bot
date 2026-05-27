@@ -70,6 +70,7 @@ public class AlertCommandService
             throw new AlertAccessDeniedException();
 
         alert.Cancel();
+        await _alertRepository.UpdateAsync(alert, cancellationToken);
     }
 
     private static AlertListItem MapToListItem(PriceAlert alert)
