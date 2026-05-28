@@ -434,3 +434,12 @@ appsettings.local.json
 
 **/appsettings.Local.json
 **/appsettings.local.json
+
+# Local SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+**/Data/*.db
+**/Data/*.db-shm
+**/Data/*.db-wal
