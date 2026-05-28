@@ -1,5 +1,4 @@
 using CryptoAlerts.Application.Dtos;
-using CryptoAlerts.Application.Exceptions;
 using CryptoAlerts.Application.Interfaces;
 
 namespace CryptoAlerts.Application.Services;
@@ -17,25 +16,17 @@ public class PriceQueryService
 
     public async Task<PriceResult> GetPriceAsync(string symbol, string currency, CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var assetId = await _symbolResolver.ResolveAssetIdAsync(symbol, cancellationToken);
+        var assetId = await _symbolResolver.ResolveAssetIdAsync(symbol, cancellationToken);
 
-            // Attach the original symbol to the result so callers get back what they requested
-            var price = await _priceProvider.GetCurrentPriceAsync(assetId, currency, cancellationToken);
+        var price = await _priceProvider.GetCurrentPriceAsync(assetId, currency, cancellationToken);
 
-            return new PriceResult
-            {
-                AssetSymbol = symbol,
-                AssetId = price.AssetId,
-                Currency = price.Currency,
-                Value = price.Value,
-                RetrievedAtUtc = price.RetrievedAtUtc
-            };
-        }
-        catch (UnknownSymbolException)
+        return new PriceResult
         {
-            throw;
-        }
+            AssetSymbol = symbol,
+            AssetId = price.AssetId,
+            Currency = price.Currency,
+            Value = price.Value,
+            RetrievedAtUtc = price.RetrievedAtUtc
+        };
     }
 }

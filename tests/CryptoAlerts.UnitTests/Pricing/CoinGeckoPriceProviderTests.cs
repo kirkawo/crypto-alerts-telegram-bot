@@ -36,6 +36,7 @@ public class CoinGeckoPriceProviderTests
         var provider = CreateProvider(handler);
         var result = await provider.GetCurrentPriceAsync("bitcoin", "usd");
 
+        Assert.Empty(result.AssetSymbol);
         Assert.Equal("bitcoin", result.AssetId);
         Assert.Equal("usd", result.Currency);
         Assert.Equal(45123.45m, result.Value);

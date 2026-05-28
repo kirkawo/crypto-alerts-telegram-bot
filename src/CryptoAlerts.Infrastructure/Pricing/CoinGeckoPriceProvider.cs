@@ -42,7 +42,7 @@ public class CoinGeckoPriceProvider : IPriceProvider
 
         return new PriceResult
         {
-            AssetSymbol = assetId,
+            AssetSymbol = string.Empty,
             AssetId = assetId,
             Currency = currency,
             Value = priceElement.GetDecimal(),

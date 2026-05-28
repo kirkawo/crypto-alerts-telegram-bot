@@ -10,6 +10,10 @@ public static class CommandParser
         var parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var command = parts[0].ToLowerInvariant();
 
+        var atIndex = command.IndexOf('@');
+        if (atIndex >= 0)
+            command = command[..atIndex];
+
         return command switch
         {
             "/start" => new ParsedCommand(CommandType.Start),
