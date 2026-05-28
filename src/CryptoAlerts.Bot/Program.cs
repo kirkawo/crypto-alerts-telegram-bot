@@ -1,14 +1,15 @@
 using CryptoAlerts.Application;
 using CryptoAlerts.Application.Interfaces;
+using CryptoAlerts.Bot.Configuration;
 using CryptoAlerts.Bot.Telegram;
 using CryptoAlerts.Bot.Workers;
 using CryptoAlerts.Infrastructure;
 using CryptoAlerts.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddLocalOverrides(builder.Environment);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
