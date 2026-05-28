@@ -27,4 +27,9 @@ public class UserRepository : IUserRepository
         await _context.TrackedUsers.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<TrackedUser?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _context.TrackedUsers.FindAsync(new object[] { userId }, cancellationToken);
+    }
 }

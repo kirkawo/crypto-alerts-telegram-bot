@@ -1,5 +1,6 @@
 using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Domain.Entities;
+using CryptoAlerts.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoAlerts.Infrastructure.Persistence.Repositories;
@@ -34,6 +35,13 @@ public class AlertRepository : IAlertRepository
     {
         return await _context.PriceAlerts
             .Where(a => a.UserId == userId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<PriceAlert>> GetAllActiveAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.PriceAlerts
+            .Where(a => a.Status == AlertStatus.Active)
             .ToListAsync(cancellationToken);
     }
 }
