@@ -3,6 +3,7 @@ using CryptoAlerts.Application.Exceptions;
 using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Application.Services;
 using CryptoAlerts.Bot.Commands;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -13,6 +14,7 @@ public class TelegramUpdateHandler
     private readonly PriceQueryService _priceQueryService;
     private readonly ITelegramMessageSender _messageSender;
     private readonly ILogger<TelegramUpdateHandler> _logger;
+    private readonly string _botUsername;
 
     private const string WelcomeMessage =
         "Welcome to CryptoAlertsBot! Use /help to see available commands.";
@@ -37,11 +39,13 @@ public class TelegramUpdateHandler
     public TelegramUpdateHandler(
         PriceQueryService priceQueryService,
         ITelegramMessageSender messageSender,
-        ILogger<TelegramUpdateHandler> logger)
+        ILogger<TelegramUpdateHandler> logger,
+        IOptions<TelegramBotOptions> options)
     {
         _priceQueryService = priceQueryService;
         _messageSender = messageSender;
         _logger = logger;
+        _botUsername = options.Value.BotUsername;
     }
 
     public async Task HandleAsync(Update update, CancellationToken cancellationToken = default)
@@ -53,7 +57,7 @@ public class TelegramUpdateHandler
 
         try
         {
-            var command = CommandParser.Parse(text);
+            var command = CommandParser.Parse(text, _botUsername);
 
             switch (command.Type)
             {

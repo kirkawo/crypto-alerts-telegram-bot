@@ -136,6 +136,48 @@ public class CommandParserTests
         Assert.Equal("BTC", result.Arguments[0]);
     }
 
+    [Fact]
+    public void Parse_WithBotName_MatchingBot_AcceptsCommand()
+    {
+        var result = CommandParser.Parse("/start@MyBot", "MyBot");
+
+        Assert.Equal(CommandType.Start, result.Type);
+    }
+
+    [Fact]
+    public void Parse_WithBotName_DifferentBot_ReturnsUnknown()
+    {
+        var result = CommandParser.Parse("/start@OtherBot", "MyBot");
+
+        Assert.Equal(CommandType.Unknown, result.Type);
+    }
+
+    [Fact]
+    public void Parse_PriceWithBotName_MatchingBot_AcceptsCommand()
+    {
+        var result = CommandParser.Parse("/price@MyBot BTC", "MyBot");
+
+        Assert.Equal(CommandType.Price, result.Type);
+        Assert.Equal("BTC", result.Arguments[0]);
+    }
+
+    [Fact]
+    public void Parse_PriceWithBotName_DifferentBot_ReturnsUnknown()
+    {
+        var result = CommandParser.Parse("/price@OtherBot BTC", "MyBot");
+
+        Assert.Equal(CommandType.Unknown, result.Type);
+        Assert.Empty(result.Arguments);
+    }
+
+    [Fact]
+    public void Parse_WithBotName_CaseInsensitiveMatch_AcceptsCommand()
+    {
+        var result = CommandParser.Parse("/start@mybot", "MyBot");
+
+        Assert.Equal(CommandType.Start, result.Type);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]

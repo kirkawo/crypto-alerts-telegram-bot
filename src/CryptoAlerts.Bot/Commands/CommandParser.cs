@@ -2,19 +2,28 @@ namespace CryptoAlerts.Bot.Commands;
 
 public static class CommandParser
 {
-    public static ParsedCommand Parse(string? text)
+    public static ParsedCommand Parse(string? text, string? botUsername = null)
     {
         if (string.IsNullOrWhiteSpace(text) || text[0] != '/')
             return new ParsedCommand(CommandType.Unknown);
 
         var parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var command = parts[0].ToLowerInvariant();
+        var rawCommand = parts[0].ToLowerInvariant();
 
-        var atIndex = command.IndexOf('@');
+        var atIndex = rawCommand.IndexOf('@');
         if (atIndex >= 0)
-            command = command[..atIndex];
+        {
+            var mentionedBot = rawCommand[(atIndex + 1)..];
+            if (botUsername is not null &&
+                !string.Equals(mentionedBot, botUsername, StringComparison.OrdinalIgnoreCase))
+            {
+                return new ParsedCommand(CommandType.Unknown);
+            }
 
-        return command switch
+            rawCommand = rawCommand[..atIndex];
+        }
+
+        return rawCommand switch
         {
             "/start" => new ParsedCommand(CommandType.Start),
             "/help" => new ParsedCommand(CommandType.Help),

@@ -4,6 +4,7 @@ using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Application.Services;
 using CryptoAlerts.Bot.Telegram;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -27,9 +28,11 @@ public class TelegramUpdateHandlerTests
             _symbolResolverMock.Object, _priceProviderMock.Object);
 
         var loggerMock = new Mock<ILogger<TelegramUpdateHandler>>();
+        var optionsMock = new Mock<IOptions<TelegramBotOptions>>();
+        optionsMock.Setup(o => o.Value).Returns(new TelegramBotOptions { BotUsername = "" });
 
         _handler = new TelegramUpdateHandler(
-            priceQueryService, _messageSenderMock.Object, loggerMock.Object);
+            priceQueryService, _messageSenderMock.Object, loggerMock.Object, optionsMock.Object);
     }
 
     [Fact]
