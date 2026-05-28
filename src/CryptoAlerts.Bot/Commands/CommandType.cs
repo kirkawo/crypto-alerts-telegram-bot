@@ -5,5 +5,8 @@ public enum CommandType
     Unknown,
     Start,
     Help,
-    Price
+    Price,
+    SetAlert,
+    ListAlerts,
+    RemoveAlert
 }
