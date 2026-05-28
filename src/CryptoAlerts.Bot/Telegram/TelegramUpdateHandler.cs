@@ -31,6 +31,9 @@ public class TelegramUpdateHandler
 
     private const string SupportedSymbols = "Supported symbols: BTC, ETH, SOL, BNB, XRP, ADA, DOGE";
 
+    private const string GenericErrorMessage =
+        "An unexpected error occurred. Please try again later.";
+
     public TelegramUpdateHandler(
         PriceQueryService priceQueryService,
         ITelegramMessageSender messageSender,
@@ -74,6 +77,7 @@ public class TelegramUpdateHandler
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error handling message from chat {ChatId}", chatId);
+            await _messageSender.SendMessageAsync(chatId, GenericErrorMessage, cancellationToken);
         }
     }
 

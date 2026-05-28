@@ -62,6 +62,26 @@ public class CommandParserTests
     }
 
     [Fact]
+    public void Parse_PriceCommand_MultipleSpacesBetweenCommandAndSymbol()
+    {
+        var result = CommandParser.Parse("/price    BTC");
+
+        Assert.Equal(CommandType.Price, result.Type);
+        Assert.Single(result.Arguments);
+        Assert.Equal("BTC", result.Arguments[0]);
+    }
+
+    [Fact]
+    public void Parse_PriceCommand_UppercaseCommandLowercaseSymbol()
+    {
+        var result = CommandParser.Parse("/PRICE btc");
+
+        Assert.Equal(CommandType.Price, result.Type);
+        Assert.Single(result.Arguments);
+        Assert.Equal("btc", result.Arguments[0]);
+    }
+
+    [Fact]
     public void Parse_UnknownCommand_ReturnsUnknownType()
     {
         var result = CommandParser.Parse("/unknown");
