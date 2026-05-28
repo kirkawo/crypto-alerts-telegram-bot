@@ -7,4 +7,6 @@ public class CoinGeckoOptions
     public string BaseUrl { get; set; } = "https://api.coingecko.com";
 
     public string DefaultCurrency { get; set; } = "usd";
+
+    public string ApiKey { get; set; } = string.Empty;
 }

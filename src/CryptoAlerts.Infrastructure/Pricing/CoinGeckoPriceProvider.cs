@@ -24,7 +24,11 @@ public class CoinGeckoPriceProvider : IPriceProvider
             $"api/v3/simple/price?ids={assetId}&vs_currencies={currency}",
             cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException(
+                $"CoinGecko API returned status code {(int)response.StatusCode} ({response.ReasonPhrase}) for asset '{assetId}'.");
+        }
 
         var doc = await response.Content.ReadFromJsonAsync<JsonDocument>(
             cancellationToken: cancellationToken);
