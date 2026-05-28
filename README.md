@@ -1,13 +1,17 @@
 # Crypto Alerts Telegram Bot
 
-A .NET 8 Telegram bot for cryptocurrency price tracking and alerts. Currently supports live price lookups via the CoinGecko API, with a layered architecture ready for alert management.
+[![CI](https://github.com/kirkawo/crypto-alerts-telegram-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kirkawo/crypto-alerts-telegram-bot/actions/workflows/ci.yml)
 
-## Features
+A .NET 8 Telegram bot for cryptocurrency price lookup and automated price alerts via the CoinGecko API.
 
-- **Telegram long polling bot** — `/start`, `/help`, and `/price <symbol>` commands
-- **CoinGecko integration** — resolves common symbols (BTC, ETH, SOL, BNB, XRP, ADA, DOGE) and fetches current prices
+## Current Features
+
+- **Telegram long polling bot** — `/start`, `/help`, `/price`, and alert management commands
+- **Price lookup** — `/price <symbol>` fetches live prices from CoinGecko (supports BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
+- **Alert management** — create (`/set_alert`), list (`/list_alerts`), and cancel (`/remove_alert`) price alerts
+- **Background alert checking** — polls active alerts every 60 seconds and sends a Telegram notification when the target price is met
 - **SQLite persistence** — users and alerts stored via EF Core
-- **Alert foundation** — domain entities, application services, and persistence for price alerts already implemented
+- **GitHub Actions CI** — automatic restore, build, and test on push/PR to main and develop
 
 ## Tech Stack
 
@@ -16,13 +20,14 @@ A .NET 8 Telegram bot for cryptocurrency price tracking and alerts. Currently su
 - Entity Framework Core + SQLite
 - CoinGecko API
 - xUnit + Moq
+- GitHub Actions
 
 ## Project Structure
 
 ```
 src/
-├── CryptoAlerts.Bot           — Telegram long polling, command parsing, DI wiring
-├── CryptoAlerts.Application   — Price queries, alert management, application interfaces
+├── CryptoAlerts.Bot           — Telegram long polling, command parsing, background worker, DI wiring
+├── CryptoAlerts.Application   — Price queries, alert management, alert processing, application interfaces
 ├── CryptoAlerts.Domain        — Entities (PriceAlert, TrackedUser), enums
 └── CryptoAlerts.Infrastructure— CoinGecko HTTP client, EF Core persistence, DI registration
 tests/
@@ -52,6 +57,8 @@ dotnet build
 dotnet run --project src/CryptoAlerts.Bot
 ```
 
+The alert checker runs automatically every 60 seconds. The polling interval is configurable via `AlertCheckWorker:PollingIntervalSeconds` in `appsettings.json`.
+
 ## Available Commands
 
 | Command | Description |
@@ -59,6 +66,9 @@ dotnet run --project src/CryptoAlerts.Bot
 | `/start` | Welcome message |
 | `/help` | List available commands |
 | `/price BTC` | Current price of a symbol |
+| `/set_alert BTC 50000` | Create alert when BTC reaches 50000 USD |
+| `/list_alerts` | List your active alerts |
+| `/remove_alert <alertId>` | Cancel a specific alert |
 
 `/price` supports: BTC, ETH, SOL, BNB, XRP, ADA, DOGE.
 
@@ -66,6 +76,6 @@ Commands addressed to the bot by name (`/price@MyBot BTC`) are accepted; command
 
 ## Planned
 
-- Alert creation and management commands (`/set_alert`, `/list_alerts`, `/remove_alert`)
-- Background worker for checking alert conditions
-- CI pipeline
+- Docker support
+- Portfolio tracking
+- Additional alert conditions (below price, percentage change)
