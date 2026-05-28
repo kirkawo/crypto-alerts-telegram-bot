@@ -1,0 +1,73 @@
+using System.Globalization;
+using CryptoAlerts.Application.Interfaces;
+using CryptoAlerts.Domain.Entities;
+using Microsoft.Extensions.Logging;
+
+namespace CryptoAlerts.Application.Services;
+
+public class AlertProcessingService
+{
+    private readonly IAlertRepository _alertRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IPriceProvider _priceProvider;
+    private readonly ITelegramMessageSender _messageSender;
+    private readonly ILogger<AlertProcessingService> _logger;
+
+    public AlertProcessingService(
+        IAlertRepository alertRepository,
+        IUserRepository userRepository,
+        IPriceProvider priceProvider,
+        ITelegramMessageSender messageSender,
+        ILogger<AlertProcessingService> logger)
+    {
+        _alertRepository = alertRepository;
+        _userRepository = userRepository;
+        _priceProvider = priceProvider;
+        _messageSender = messageSender;
+        _logger = logger;
+    }
+
+    public async Task<int> ProcessAlertsAsync(CancellationToken cancellationToken = default)
+    {
+        var alerts = await _alertRepository.GetAllActiveAsync(cancellationToken);
+        var triggered = 0;
+
+        foreach (var alert in alerts)
+        {
+            try
+            {
+                if (await TryTriggerAlertAsync(alert, cancellationToken))
+                    triggered++;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to process alert {AlertId} for {AssetSymbol}", alert.Id, alert.AssetSymbol);
+            }
+        }
+
+        return triggered;
+    }
+
+    private async Task<bool> TryTriggerAlertAsync(PriceAlert alert, CancellationToken ct)
+    {
+        var price = await _priceProvider.GetCurrentPriceAsync(alert.AssetId, "usd", ct);
+
+        if (price.Value < alert.TargetPrice)
+            return false;
+
+        var user = await _userRepository.GetByIdAsync(alert.UserId, ct);
+
+        if (user is null)
+            return false;
+
+        var formattedCurrent = price.Value.ToString("0.########", CultureInfo.InvariantCulture);
+        var message = $"Alert triggered: {alert.AssetSymbol} reached {alert.TargetPrice} USD (current: {formattedCurrent} USD)";
+
+        await _messageSender.SendMessageAsync(user.TelegramChatId, message, ct);
+
+        alert.Trigger();
+        await _alertRepository.UpdateAsync(alert, ct);
+
+        return true;
+    }
+}

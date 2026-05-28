@@ -28,6 +28,9 @@ public static class CommandParser
             "/start" => new ParsedCommand(CommandType.Start),
             "/help" => new ParsedCommand(CommandType.Help),
             "/price" => new ParsedCommand(CommandType.Price, parts[1..]),
+            "/set_alert" => new ParsedCommand(CommandType.SetAlert, parts[1..]),
+            "/list_alerts" => new ParsedCommand(CommandType.ListAlerts),
+            "/remove_alert" => new ParsedCommand(CommandType.RemoveAlert, parts[1..]),
             _ => new ParsedCommand(CommandType.Unknown),
         };
     }

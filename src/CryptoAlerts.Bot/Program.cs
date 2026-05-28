@@ -1,6 +1,7 @@
 using CryptoAlerts.Application;
 using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Bot.Telegram;
+using CryptoAlerts.Bot.Workers;
 using CryptoAlerts.Infrastructure;
 using CryptoAlerts.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,10 @@ builder.Services.AddSingleton<ITelegramBotClient>(sp =>
 builder.Services.AddScoped<TelegramUpdateHandler>();
 builder.Services.AddSingleton<ITelegramMessageSender, TelegramMessageSender>();
 builder.Services.AddHostedService<TelegramPollingService>();
+
+builder.Services.Configure<AlertCheckWorkerOptions>(
+    builder.Configuration.GetSection(AlertCheckWorkerOptions.SectionName));
+builder.Services.AddHostedService<AlertCheckWorker>();
 
 var app = builder.Build();
 

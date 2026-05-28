@@ -137,6 +137,53 @@ public class CommandParserTests
     }
 
     [Fact]
+    public void Parse_SetAlertCommand_WithSymbolAndPrice_ReturnsSetAlertType()
+    {
+        var result = CommandParser.Parse("/set_alert BTC 70000");
+
+        Assert.Equal(CommandType.SetAlert, result.Type);
+        Assert.Equal(2, result.Arguments.Count);
+        Assert.Equal("BTC", result.Arguments[0]);
+        Assert.Equal("70000", result.Arguments[1]);
+    }
+
+    [Fact]
+    public void Parse_SetAlertCommand_WithoutArguments_ReturnsSetAlertType()
+    {
+        var result = CommandParser.Parse("/set_alert");
+
+        Assert.Equal(CommandType.SetAlert, result.Type);
+        Assert.Empty(result.Arguments);
+    }
+
+    [Fact]
+    public void Parse_ListAlertsCommand_ReturnsListAlertsType()
+    {
+        var result = CommandParser.Parse("/list_alerts");
+
+        Assert.Equal(CommandType.ListAlerts, result.Type);
+        Assert.Empty(result.Arguments);
+    }
+
+    [Fact]
+    public void Parse_RemoveAlertCommand_WithId_ReturnsRemoveAlertType()
+    {
+        var result = CommandParser.Parse("/remove_alert a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+
+        Assert.Equal(CommandType.RemoveAlert, result.Type);
+        Assert.Single(result.Arguments);
+    }
+
+    [Fact]
+    public void Parse_RemoveAlertCommand_WithoutId_ReturnsRemoveAlertType()
+    {
+        var result = CommandParser.Parse("/remove_alert");
+
+        Assert.Equal(CommandType.RemoveAlert, result.Type);
+        Assert.Empty(result.Arguments);
+    }
+
+    [Fact]
     public void Parse_WithBotName_MatchingBot_AcceptsCommand()
     {
         var result = CommandParser.Parse("/start@MyBot", "MyBot");
