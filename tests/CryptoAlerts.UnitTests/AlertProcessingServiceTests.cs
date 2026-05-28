@@ -3,6 +3,7 @@ using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Application.Services;
 using CryptoAlerts.Domain.Entities;
 using CryptoAlerts.Domain.Enums;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CryptoAlerts.UnitTests;
@@ -13,6 +14,7 @@ public class AlertProcessingServiceTests
     private readonly Mock<IUserRepository> _userRepo;
     private readonly Mock<IPriceProvider> _priceProvider;
     private readonly Mock<ITelegramMessageSender> _messageSender;
+    private readonly Mock<ILogger<AlertProcessingService>> _logger;
 
     public AlertProcessingServiceTests()
     {
@@ -20,6 +22,7 @@ public class AlertProcessingServiceTests
         _userRepo = new Mock<IUserRepository>();
         _priceProvider = new Mock<IPriceProvider>();
         _messageSender = new Mock<ITelegramMessageSender>();
+        _logger = new Mock<ILogger<AlertProcessingService>>();
     }
 
     [Fact]
@@ -35,7 +38,7 @@ public class AlertProcessingServiceTests
             .ReturnsAsync(new PriceResult { Value = 40000m });
 
         var service = new AlertProcessingService(
-            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object);
+            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object, _logger.Object);
 
         var triggered = await service.ProcessAlertsAsync();
 
@@ -60,7 +63,7 @@ public class AlertProcessingServiceTests
             .ReturnsAsync(user);
 
         var service = new AlertProcessingService(
-            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object);
+            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object, _logger.Object);
 
         var triggered = await service.ProcessAlertsAsync();
 
@@ -85,7 +88,7 @@ public class AlertProcessingServiceTests
             .ReturnsAsync((TrackedUser?)null);
 
         var service = new AlertProcessingService(
-            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object);
+            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object, _logger.Object);
 
         var triggered = await service.ProcessAlertsAsync();
 
@@ -113,7 +116,7 @@ public class AlertProcessingServiceTests
             .ReturnsAsync(user);
 
         var service = new AlertProcessingService(
-            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object);
+            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object, _logger.Object);
 
         var triggered = await service.ProcessAlertsAsync();
 
@@ -145,7 +148,7 @@ public class AlertProcessingServiceTests
             .ReturnsAsync(user);
 
         var service = new AlertProcessingService(
-            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object);
+            _alertRepo.Object, _userRepo.Object, _priceProvider.Object, _messageSender.Object, _logger.Object);
 
         var triggered = await service.ProcessAlertsAsync();
 

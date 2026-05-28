@@ -1,6 +1,7 @@
 using System.Globalization;
 using CryptoAlerts.Application.Interfaces;
 using CryptoAlerts.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace CryptoAlerts.Application.Services;
 
@@ -10,17 +11,20 @@ public class AlertProcessingService
     private readonly IUserRepository _userRepository;
     private readonly IPriceProvider _priceProvider;
     private readonly ITelegramMessageSender _messageSender;
+    private readonly ILogger<AlertProcessingService> _logger;
 
     public AlertProcessingService(
         IAlertRepository alertRepository,
         IUserRepository userRepository,
         IPriceProvider priceProvider,
-        ITelegramMessageSender messageSender)
+        ITelegramMessageSender messageSender,
+        ILogger<AlertProcessingService> logger)
     {
         _alertRepository = alertRepository;
         _userRepository = userRepository;
         _priceProvider = priceProvider;
         _messageSender = messageSender;
+        _logger = logger;
     }
 
     public async Task<int> ProcessAlertsAsync(CancellationToken cancellationToken = default)
@@ -35,9 +39,9 @@ public class AlertProcessingService
                 if (await TryTriggerAlertAsync(alert, cancellationToken))
                     triggered++;
             }
-            catch
+            catch (Exception ex)
             {
-                // Individual alert failure should not crash the cycle
+                _logger.LogWarning(ex, "Failed to process alert {AlertId} for {AssetSymbol}", alert.Id, alert.AssetSymbol);
             }
         }
 

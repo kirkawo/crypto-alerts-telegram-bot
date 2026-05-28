@@ -43,8 +43,8 @@ public class AlertCheckWorker : BackgroundService
                 _logger.LogError(ex, "Alert check cycle failed");
             }
 
-            await Task.Delay(
-                TimeSpan.FromSeconds(_options.Value.PollingIntervalSeconds), stoppingToken);
+            var interval = Math.Max(1, _options.Value.PollingIntervalSeconds);
+            await Task.Delay(TimeSpan.FromSeconds(interval), stoppingToken);
         }
 
         _logger.LogInformation("Alert check worker stopped");
