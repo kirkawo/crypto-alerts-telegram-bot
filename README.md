@@ -3,6 +3,7 @@
 [![CI](https://github.com/kirkawo/crypto-alerts-telegram-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/kirkawo/crypto-alerts-telegram-bot/actions/workflows/ci.yml)
 
 A .NET 8 Telegram bot for cryptocurrency price lookup and automated price alerts via the CoinGecko API.
+Designed to run locally or in Docker; cloud deployment is optional and not included in this repository.
 
 ## Current Features
 
@@ -47,7 +48,10 @@ Set your bot credentials in `src/CryptoAlerts.Bot/appsettings.json`:
 "Telegram": {
   "BotToken": "<your-bot-token>",
   "BotUsername": "<your-bot-username>"
-}
+},
+"CoinGecko": {
+    "ApiKey": "<your-api-token>"
+  }
 ```
 
 Or use environment variables / user secrets (recommended for tokens).
@@ -74,11 +78,6 @@ The alert checker runs automatically every 60 seconds. The polling interval is c
 
 Commands addressed to the bot by name (`/price@MyBot BTC`) are accepted; commands for other bots are silently ignored.
 
-## Planned
-
-- Portfolio tracking
-- Additional alert conditions (below price, percentage change)
-
 ## Docker
 
 Run the bot in a container with SQLite data persisted via a named volume.
@@ -89,7 +88,7 @@ Run the bot in a container with SQLite data persisted via a named volume.
 |----------|-------------|
 | `TELEGRAM_BOT_TOKEN` | Telegram bot token from [@BotFather](https://t.me/BotFather) |
 | `TELEGRAM_BOT_USERNAME` | Your bot's username (e.g. `MyBot`) |
-| `COINGECKO_API_KEY` | (Optional) CoinGecko API key for Optional CoinGecko API key |
+| `COINGECKO_API_KEY` | CoinGecko API key |
 
 ### Quick start
 
@@ -120,3 +119,15 @@ dotnet run --project src/CryptoAlerts.Bot
 ```
 
 Set secrets via user secrets, environment variables, or `appsettings.Local.json` (untracked).
+
+## Project status
+
+This project is feature-complete for local and Docker-based use.
+
+- ✅ Telegram bot logic and commands
+- ✅ Price alerts and background worker
+- ✅ SQLite persistence
+- ✅ Docker + Docker Compose setup
+- ✅ Local run instructions in this README
+- ⏸ Cloud hosting is currently not configured. 
+  The project is optimized for local/Docker environments and can be deployed to a paid container hosting platform if needed.
