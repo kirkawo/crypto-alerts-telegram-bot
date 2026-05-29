@@ -1,0 +1,16 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - Telegram__BotToken=${TELEGRAM_BOT_TOKEN}
+      - Telegram__BotUsername=${TELEGRAM_BOT_USERNAME}
+      - CoinGecko__ApiKey=${COINGECKO_API_KEY}
+      - ConnectionStrings__DefaultConnection=Data Source=/data/app.db
+    volumes:
+      - cryptoalerts_data:/data
+    restart: unless-stopped
+
+volumes:
+  cryptoalerts_data:

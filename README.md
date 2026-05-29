@@ -76,6 +76,47 @@ Commands addressed to the bot by name (`/price@MyBot BTC`) are accepted; command
 
 ## Planned
 
-- Docker support
 - Portfolio tracking
 - Additional alert conditions (below price, percentage change)
+
+## Docker
+
+Run the bot in a container with SQLite data persisted via a named volume.
+
+### Required environment variables
+
+| Variable | Description |
+|----------|-------------|
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token from [@BotFather](https://t.me/BotFather) |
+| `TELEGRAM_BOT_USERNAME` | Your bot's username (e.g. `MyBot`) |
+| `COINGECKO_API_KEY` | (Optional) CoinGecko API key for Optional CoinGecko API key |
+
+### Quick start
+
+```bash
+# 1. Copy and fill in your secrets
+cp .env.example .env
+
+# 2. Start the bot (builds image on first run)
+docker compose up --build
+
+# 3. Stop
+docker compose down
+```
+
+The SQLite database is stored in a named Docker volume (`cryptoalerts_data`) at `/data/app.db` inside the container. The data persists across container restarts and recreations. To wipe it:
+
+```bash
+docker compose down -v
+```
+
+**Secrets note:** Never commit `.env` or `appsettings.Local.json` to version control. The `.gitignore` already excludes them. For production, use a secrets manager or CI/CD secrets instead of `.env`.
+
+### Non-Docker local run
+
+```bash
+dotnet build
+dotnet run --project src/CryptoAlerts.Bot
+```
+
+Set secrets via user secrets, environment variables, or `appsettings.Local.json` (untracked).
